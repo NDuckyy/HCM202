@@ -1,5 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useTexture } from "@react-three/drei";
+import { Fireworks as FireworksCanvas } from "@fireworks-js/react";
 import {
   BookOpen,
   Shield,
@@ -14,7 +17,8 @@ const guards = [
   {
     key: "truong",
     label: "Trường",
-    theme: "from-emerald-500/90 to-emerald-700/90",
+    // vàng đất trầm
+    theme: "from-amber-700/90 to-amber-900/90",
     tagline: "Biểu tượng của kháng chiến trường kỳ, bền bỉ",
     people: [
       {
@@ -67,7 +71,8 @@ const guards = [
   {
     key: "ky",
     label: "Kỳ",
-    theme: "from-cyan-500/90 to-sky-600/90",
+    // xanh rêu trầm
+    theme: "from-emerald-700/90 to-emerald-900/90",
     tagline: "Bền bỉ, kiên trì như chính cuộc đời người thư ký",
     people: [
       {
@@ -90,7 +95,8 @@ const guards = [
   {
     key: "khang",
     label: "Kháng",
-    theme: "from-red-500/90 to-red-700/90",
+    // đỏ trầm
+    theme: "from-red-800/90 to-red-950/90",
     tagline: "Kiên cường, mưu trí trong công tác cảnh vệ",
     people: [
       {
@@ -113,7 +119,7 @@ const guards = [
   {
     key: "chien",
     label: "Chiến",
-    theme: "from-amber-500/90 to-orange-600/90",
+    theme: "from-orange-700/90 to-orange-900/90",
     tagline: "Tinh thần chiến đấu bền bỉ và sáng tạo",
     people: [
       {
@@ -136,7 +142,7 @@ const guards = [
   {
     key: "nhat",
     label: "Nhất",
-    theme: "from-sky-500/90 to-blue-700/90",
+    theme: "from-sky-800/90 to-blue-950/90",
     tagline: "Những chiến sĩ dân tộc thiểu số gan dạ, dẫn đường cho cách mạng",
     people: [
       {
@@ -174,7 +180,7 @@ const guards = [
   {
     key: "dinh",
     label: "Định",
-    theme: "from-emerald-500/90 to-teal-700/90",
+    theme: "from-emerald-700/90 to-teal-900/90",
     tagline: 'Người đi tiền trạm "không bao giờ lạc đường"',
     people: [
       {
@@ -197,7 +203,7 @@ const guards = [
   {
     key: "thang",
     label: "Thắng",
-    theme: "from-orange-500/90 to-rose-600/90",
+    theme: "from-rose-800/90 to-rose-950/90",
     tagline: 'Hiện thân của niềm tin "nhất định thắng lợi"',
     people: [
       {
@@ -234,7 +240,7 @@ const guards = [
   {
     key: "loi",
     label: "Lợi",
-    theme: "from-lime-500/90 to-emerald-700/90",
+    theme: "from-lime-700/90 to-emerald-900/90",
     tagline: "Người cận vệ từ những ngày đầu Pác Bó",
     people: [
       {
@@ -262,7 +268,7 @@ const rubric = [
     title: "Chiều sâu học thuật & Liên kết lý thuyết",
     points: 3,
     icon: BookOpen,
-    color: "border-amber-500/60 bg-amber-500/5",
+    color: "border-amber-600/60 bg-amber-50/60",
     description:
       "Sản phẩm phải vận dụng đúng lý thuyết, phân tích logic, gắn chặt với các LO của học phần.",
     bullets: [
@@ -276,7 +282,7 @@ const rubric = [
     title: "Sáng tạo, Hình thức & Tính trình bày",
     points: 2,
     icon: Sparkles,
-    color: "border-pink-500/60 bg-pink-500/5",
+    color: "border-orange-500/60 bg-orange-50/70",
     description:
       "Sản phẩm sinh động (web, video, poster, kịch...), có ý tưởng sáng tạo rõ ràng. Website phải là trung tâm buổi trình bày, không chỉ là file đính kèm.",
     bullets: [
@@ -290,7 +296,7 @@ const rubric = [
     title: "Tính tương tác",
     points: 2,
     icon: Users,
-    color: "border-sky-500/60 bg-sky-500/5",
+    color: "border-sky-500/60 bg-sky-50/70",
     description:
       "Sản phẩm phải thu hút người xem tham gia: click, khám phá, đặt câu hỏi, bình luận...",
     bullets: [
@@ -304,7 +310,7 @@ const rubric = [
     title: "Ứng dụng AI có trách nhiệm – minh bạch – liêm chính",
     points: 2,
     icon: GraduationCap,
-    color: "border-emerald-500/60 bg-emerald-500/5",
+    color: "border-emerald-600/60 bg-emerald-50/70",
     description:
       "Trình bày rõ cách sử dụng AI, kiểm chứng thông tin và đảm bảo liêm chính học thuật.",
     bullets: [
@@ -318,7 +324,7 @@ const rubric = [
     title: "Tính cập nhật & Gắn kết thực tiễn",
     points: 1,
     icon: ScrollText,
-    color: "border-lime-500/60 bg-lime-500/5",
+    color: "border-lime-600/60 bg-lime-50/70",
     description:
       "Liên hệ bối cảnh xã hội – kinh tế – chính trị hiện nay, cho thấy ý nghĩa hiện thời của khẩu hiệu \"Trường kỳ kháng chiến nhất định thắng lợi\".",
     bullets: [
@@ -360,13 +366,155 @@ const PillButton = ({ active, children, ...rest }) => (
     className={
       "rounded-full px-4 h-9 text-xs font-medium border transition-all " +
       (active
-        ? "bg-emerald-500 text-black border-emerald-400 shadow-lg shadow-emerald-500/30"
-        : "bg-zinc-900 border-zinc-700 text-zinc-200 hover:border-emerald-500 hover:text-emerald-200")
+        ? "bg-amber-600 text-white border-amber-500 shadow-lg shadow-amber-500/30"
+        : "bg-white/80 border-stone-400 text-stone-800 hover:border-amber-500 hover:text-amber-700")
     }
   >
     {children}
   </button>
 );
+
+function Earth() {
+  const earthTexture = useTexture("/textures/earth.jpg");
+
+  return (
+    <mesh rotation={[0.4, 0.7, 0]}>
+      <sphereGeometry args={[1.2, 64, 64]} />
+      <meshStandardMaterial
+        map={earthTexture}
+        metalness={0.35}        // tăng chút độ kim loại cho phản xạ
+        roughness={0.45}        // bề mặt bớt nhám -> sáng hơn
+        emissive="#1a1a3a"      // màu tự phát sáng rất nhẹ
+        emissiveIntensity={0.25}
+      />
+    </mesh>
+  );
+}
+
+
+function RotatingGlobe() {
+  return (
+    <Canvas
+      className="w-full h-full"
+      camera={{ position: [0, 0, 3] }}
+    >
+      {/* Ánh sáng nhẹ, tone ấm hoài cổ nhưng sáng hơn */}
+      <ambientLight intensity={0.85} />
+      <directionalLight
+        position={[4, 4, 4]}
+        intensity={1.4}
+        color="#ffe7c2"   // ánh sáng ấm một chút
+      />
+      {/* Một nguồn sáng phụ dịu từ phía sau để viền sáng hơn */}
+      <directionalLight
+        position={[-3, -2, 1]}
+        intensity={0.6}
+        color="#d0e6ff"
+      />
+
+      <Earth />
+
+      <OrbitControls
+        enablePan={false}
+        enableZoom={false}
+        autoRotate
+        autoRotateSpeed={0.8}
+      />
+    </Canvas>
+  );
+}
+
+function FallingFlags() {
+  const flags = React.useMemo(
+    () =>
+      Array.from({ length: 20 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100, // vị trí ngang ngẫu nhiên
+        delay: Math.random() * 5, // trễ ngẫu nhiên
+        duration: 10 + Math.random() * 8, // tốc độ rơi khác nhau
+        size: 18 + Math.random() * 12, // kích thước emoji
+      })),
+    []
+  );
+
+  return (
+    <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+      {flags.map((flag) => (
+        <motion.div
+          key={flag.id}
+          initial={{ y: -60, opacity: 0, x: 0, rotateZ: 0 }}
+          animate={{
+            y: "110vh",
+            opacity: [0, 1, 1, 0],
+            x: [-10, 0, 10, 0],
+            rotateZ: [-8, 6, -4, 10],
+          }}
+          transition={{
+            repeat: Infinity,
+            repeatType: "loop",
+            duration: flag.duration,
+            delay: flag.delay,
+            ease: "linear",
+          }}
+          style={{
+            position: "absolute",
+            left: `${flag.left}%`,
+            fontSize: flag.size,
+          }}
+        >
+          <span role="img" aria-label="Vietnam flag">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_North_Vietnam_%281955%E2%80%931976%29.svg/250px-Flag_of_North_Vietnam_%281955%E2%80%931976%29.svg.png"
+              alt="Cờ Việt Nam"
+              style={{
+                width: `${flag.size}px`,
+                height: "auto",
+              }}
+            />
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function FireworksOverlay() {
+  const [visible, setVisible] = React.useState(true);
+
+  // Tự tắt sau 3 giây cho nhẹ
+  React.useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <FireworksCanvas
+      options={{
+        // chỉ nổ vùng giữa màn hình cho đỡ rối
+        rocketsPoint: { min: 40, max: 60 }, // % chiều ngang
+        intensity: 25,
+        opacity: 0.6,
+        traceLength: 3,
+        traceSpeed: 10,
+        explosion: 6,
+        brightness: { min: 60, max: 90 },
+      }}
+      style={{
+        position: "fixed",
+        left: 0,
+        top: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+        zIndex: 30,
+      }}
+    />
+  );
+}
+
+
 
 function App() {
   const [selectedGuardKey, setSelectedGuardKey] = React.useState("truong");
@@ -383,26 +531,29 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 text-zinc-50">
-      <div className="max-w-6xl mx-auto px-4 pb-24">
+    // nền để trong suốt cho trống đồng phía sau + chữ mặc định nâu đậm
+    <div className="min-h-screen bg-transparent text-stone-900">
+      <FallingFlags />
+      <FireworksOverlay />
+      <div className="max-w-6xl mx-auto px-4 pb">
         {/* Header / Hero */}
         <header className="pt-10 pb-8 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-4 max-w-xl"
+            className="space-y-4 max-w-xl bg-white/65 shadow-sm rounded-2xl p-4 backdrop-blur-sm"
           >
-            <Badge className="bg-emerald-500/10 text-emerald-300 border-emerald-500/40 px-3 py-1 uppercase tracking-wide">
+            <Badge className="bg-amber-100 text-amber-800 border-amber-300 px-3 py-1 uppercase tracking-wide">
               Dự án lịch sử & ứng dụng AI có trách nhiệm
             </Badge>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight text-stone-900">
               Trường Kỳ Kháng Chiến
-              <span className="block text-emerald-400 mt-1">
+              <span className="block text-amber-700 mt-1">
                 Nhất Định Thắng Lợi
               </span>
             </h1>
-            <p className="text-sm md:text-base text-zinc-300 leading-relaxed">
+            <p className="text-sm md:text-base text-stone-800 leading-relaxed">
               Website giới thiệu tám cận vệ của Chủ tịch Hồ Chí Minh – những con
               người mang tên khẩu hiệu sống
               {" “Trường – Kỳ – Kháng – Chiến – Nhất – Định – Thắng – Lợi” – "}
@@ -413,16 +564,16 @@ function App() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => handleScrollTo("guards")}
-                className="rounded-full px-5 h-10 bg-emerald-500 hover:bg-emerald-400 text-sm font-medium flex items-center gap-2"
+                className="rounded-full px-5 h-10 bg-amber-600 hover:bg-amber-500 text-sm font-medium flex items-center gap-2 text-white shadow"
               >
                 <Shield className="w-4 h-4" />
                 Khám phá 8 cận vệ
               </button>
               <button
                 onClick={() => handleScrollTo("rubric")}
-                className="rounded-full px-5 h-10 border border-zinc-600 bg-zinc-900/60 text-sm font-medium flex items-center gap-2"
+                className="rounded-full px-5 h-10 border border-stone-400 bg-white/85 text-sm font-medium flex items-center gap-2 text-stone-800 hover:border-amber-500 hover:text-amber-700"
               >
-                <Star className="w-4 h-4" />
+                <Star className="w-4 h-4 text-amber-600" />
                 Xem tiêu chí chấm điểm
               </button>
             </div>
@@ -432,8 +583,14 @@ function App() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="md:w-72"
+            className="relative hidden md:block md:w-[420px] md:h-[400px] rounded-2xl overflow-hidden bg-white/50 shadow-lg backdrop-blur-sm"
           >
+            <RotatingGlobe />
+            {/* Thanh mô tả nhỏ phía dưới quả cầu */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white/95 via-white/70 to-transparent text-[11px] text-center text-stone-700 px-3 pt-4 pb-3">
+              Địa cầu 3D gợi nhắc tầm vóc quốc tế của cuộc kháng chiến
+              và thông điệp “Trường kỳ kháng chiến, nhất định thắng lợi”.
+            </div>
           </motion.div>
         </header>
 
@@ -444,16 +601,16 @@ function App() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={fadeInUp}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 bg-white/70 rounded-2xl px-4 py-3 backdrop-blur"
           >
-            <div className="w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-500/50 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-emerald-300" />
+            <div className="w-9 h-9 rounded-full bg-amber-100 border border-amber-400 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-amber-700" />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
+              <h2 className="text-xl md:text-2xl font-semibold text-stone-900">
                 Tám cận vệ – khẩu hiệu sống của kháng chiến
               </h2>
-              <p className="text-xs md:text-sm text-zinc-300 mt-1 max-w-2xl">
+              <p className="text-xs md:text-sm text-stone-700 mt-1 max-w-2xl">
                 Bốn chiến sĩ người Kinh (Trường – Kỳ – Kháng – Chiến) và bốn
                 chiến sĩ dân tộc thiểu số (Nhất – Định – Thắng – Lợi) tạo thành
                 vòng tròn bảo vệ Bác, đồng thời nhắc nhở toàn quân về tinh thần
@@ -477,21 +634,21 @@ function App() {
                   variants={fadeInUp}
                   onClick={() => setSelectedGuardKey(g.key)}
                   className={
-                    "w-full flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition-all " +
+                    "w-full flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition-all bg-white/80 backdrop-blur " +
                     (selectedGuardKey === g.key
-                      ? "border-emerald-400/70 bg-emerald-500/10 shadow-md shadow-emerald-500/20"
-                      : "border-zinc-700/80 bg-zinc-900/60 hover:border-emerald-500/60 hover:bg-zinc-900")
+                      ? "border-amber-500/80 shadow-md shadow-amber-400/30"
+                      : "border-stone-300 hover:border-amber-500/70")
                   }
                 >
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold tracking-wide uppercase text-[11px] text-zinc-300">
+                    <span className="font-semibold tracking-wide uppercase text-[11px] text-stone-800">
                       {g.label}
                     </span>
-                    <span className="text-[11px] text-zinc-400 line-clamp-2">
+                    <span className="text-[11px] text-stone-600 line-clamp-2">
                       {g.tagline}
                     </span>
                   </div>
-                  <Badge className="border-emerald-500/60 text-emerald-300 bg-emerald-500/10">
+                  <Badge className="border-amber-500/70 text-amber-800 bg-amber-50">
                     {g.people.length} nhân vật
                   </Badge>
                 </motion.button>
@@ -505,24 +662,24 @@ function App() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 overflow-hidden flex flex-col">
+              <div className="rounded-2xl border border-stone-300 bg-white/90 overflow-hidden flex flex-col backdrop-blur">
                 <div
                   className={
-                    "px-5 py-4 border-b border-zinc-800/80 bg-gradient-to-r " +
+                    "px-5 py-4 border-b border-stone-200 bg-gradient-to-r text-white " +
                     selectedGuard.theme
                   }
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="space-y-1">
-                      <p className="text-[11px] uppercase tracking-wide text-emerald-50/80 font-medium flex items-center gap-1">
+                      <p className="text-[11px] uppercase tracking-wide font-medium flex items-center gap-1">
                         <Shield className="w-3 h-3" />
                         {selectedGuard.label}
                       </p>
-                      <p className="text-xs text-zinc-100/90">
+                      <p className="text-xs opacity-90">
                         {selectedGuard.tagline}
                       </p>
                     </div>
-                    <div className="text-right text-[11px] text-emerald-50/80">
+                    <div className="text-right text-[11px] opacity-90">
                       <p>Bốn Kinh & bốn dân tộc thiểu số</p>
                       <p className="opacity-80">Một vòng tròn bảo vệ Bác</p>
                     </div>
@@ -530,46 +687,46 @@ function App() {
                 </div>
                 <div className="p-0 flex-1 flex flex-col">
                   <div className="max-h-[485px] overflow-y-auto">
-                    <div className="p-4 space-y-4 text-xs md:text-sm text-zinc-200">
+                    <div className="p-4 space-y-4 text-xs md:text-sm text-stone-800">
                       {selectedGuard.people.map((p, idx) => (
                         <div
                           key={p.name}
                           className={
-                            "relative rounded-xl border border-zinc-700/70 bg-zinc-900/70 p-4 " +
+                            "relative rounded-xl border border-stone-200 bg-stone-50 p-4 " +
                             (idx === 0 ? "" : "mt-1")
                           }
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                             <div>
-                              <h3 className="font-semibold text-sm flex items-center gap-2">
+                              <h3 className="font-semibold text-sm flex items-center gap-2 text-stone-900">
                                 {p.name}
-                                <span className="text-[11px] font-normal text-zinc-400">
+                                <span className="text-[11px] font-normal text-stone-500">
                                   ({p.realName})
                                 </span>
                               </h3>
-                              <p className="text-[11px] text-zinc-400 mt-0.5">
+                              <p className="text-[11px] text-stone-600 mt-0.5">
                                 {p.years} • {p.ethnicity} • {p.origin}
                               </p>
                             </div>
-                            <Badge className="bg-zinc-800/80 border-zinc-600/80 text-zinc-200 flex items-center gap-1">
-                              <Sparkles className="w-3 h-3" />
+                            <Badge className="bg-white border-stone-300 text-stone-800 flex items-center gap-1">
+                              <Sparkles className="w-3 h-3 text-amber-600" />
                               Cận vệ của Bác
                             </Badge>
                           </div>
-                          <p className="text-[12px] text-emerald-200 mb-2 leading-relaxed">
+                          <p className="text-[12px] text-amber-800 mb-2 leading-relaxed">
                             {p.role}
                           </p>
-                          <ul className="space-y-1.5 text-[12px] text-zinc-300 list-disc list-inside">
+                          <ul className="space-y-1.5 text-[12px] text-stone-800 list-disc list-inside">
                             {p.highlights.map((h) => (
                               <li key={h}>{h}</li>
                             ))}
                           </ul>
-                          <p className="mt-2 text-[12px] text-zinc-400 leading-relaxed">
+                          <p className="mt-2 text-[12px] text-stone-700 leading-relaxed">
                             {p.later}
                           </p>
                         </div>
                       ))}
-                      <p className="text-[11px] text-zinc-500 pt-1">
+                      <p className="text-[11px] text-stone-600 pt-1">
                         Gợi ý trình bày: Khi thuyết trình, mỗi thành viên trong
                         nhóm có thể đảm nhiệm kể về một nhân vật, kết hợp hiển
                         thị đoạn tiểu sử và phân tích bài học rút ra (tinh thần
@@ -591,16 +748,16 @@ function App() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={fadeInUp}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 bg-white/70 rounded-2xl px-4 py-3 backdrop-blur"
           >
-            <div className="w-9 h-9 rounded-full bg-amber-500/15 border border-amber-500/50 flex items-center justify-center">
-              <Star className="w-5 h-5 text-amber-300" />
+            <div className="w-9 h-9 rounded-full bg-amber-100 border border-amber-400 flex items-center justify-center">
+              <Star className="w-5 h-5 text-amber-700" />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
+              <h2 className="text-xl md:text-2xl font-semibold text-stone-900">
                 Rubric chấm điểm sản phẩm & thuyết trình
               </h2>
-              <p className="text-xs md:text-sm text-zinc-300 mt-1 max-w-2xl">
+              <p className="text-xs md:text-sm text-stone-700 mt-1 max-w-2xl">
                 Phần này tóm tắt 5 tiêu chí chấm điểm (3–2–2–2–1) và gợi ý cách
                 tối ưu website cùng bài trình bày để đạt điểm cao nhất, đồng
                 thời vẫn minh bạch trong việc sử dụng AI.
@@ -608,9 +765,8 @@ function App() {
             </div>
           </motion.div>
 
-          {/* Tabs custom */}
           <div className="mt-1">
-            <div className="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-700/80 rounded-full px-1 py-1 text-xs">
+            <div className="inline-flex items-center gap-2 bg-white/80 border border-stone-300 rounded-full px-1 py-1 text-xs backdrop-blur">
               <PillButton
                 active={activeTab === "overview"}
                 onClick={() => setActiveTab("overview")}
@@ -639,30 +795,30 @@ function App() {
                     >
                       <div
                         className={
-                          "h-full rounded-2xl border border-zinc-700/80 " +
+                          "h-full rounded-2xl border bg-white/90 backdrop-blur " +
                           item.color
                         }
                       >
                         <div className="pb-2 pt-3 px-4 flex flex-row items-center justify-between gap-2">
                           <div className="space-y-1">
-                            <div className="text-sm flex items-center gap-2 font-semibold">
-                              <span className="inline-flex w-6 h-6 rounded-full bg-zinc-900/80 items-center justify-center border border-zinc-700/80 text-[11px]">
+                            <div className="text-sm flex items-center gap-2 font-semibold text-stone-900">
+                              <span className="inline-flex w-6 h-6 rounded-full bg-white items-center justify-center border border-stone-300 text-[11px]">
                                 {item.id}
                               </span>
                               {item.title}
                             </div>
-                            <p className="text-[11px] text-zinc-300 leading-relaxed">
+                            <p className="text-[11px] text-stone-800 leading-relaxed">
                               {item.description}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-1">
-                            <Icon className="w-5 h-5 text-emerald-300" />
-                            <p className="text-[11px] text-emerald-200 font-medium">
+                            <Icon className="w-5 h-5 text-amber-700" />
+                            <p className="text-[11px] text-amber-800 font-medium">
                               {item.points} điểm
                             </p>
                           </div>
                         </div>
-                        <div className="pt-1 pb-3 px-4 text-[12px] text-zinc-200">
+                        <div className="pt-1 pb-3 px-4 text-[12px] text-stone-800">
                           <ul className="space-y-1.5 list-disc list-inside">
                             {item.bullets.map((b) => (
                               <li key={b}>{b}</li>
@@ -678,14 +834,14 @@ function App() {
 
             {activeTab === "ai" && (
               <div className="mt-4">
-                <div className="rounded-2xl border border-emerald-500/60 bg-emerald-500/5">
+                <div className="rounded-2xl border border-emerald-400 bg-emerald-50/90 backdrop-blur">
                   <div className="pb-2 pt-3 px-4 flex flex-row items-start justify-between gap-3">
                     <div>
-                      <div className="text-sm flex items-center gap-2 font-semibold">
-                        <GraduationCap className="w-4 h-4 text-emerald-300" />
+                      <div className="text-sm flex items-center gap-2 font-semibold text-stone-900">
+                        <GraduationCap className="w-4 h-4 text-emerald-700" />
                         Thiết kế phần "AI Usage" cho bài của bạn
                       </div>
-                      <p className="text-[11px] text-emerald-100/90 mt-1 max-w-2xl">
+                      <p className="text-[11px] text-stone-800 mt-1 max-w-2xl">
                         Đây là gợi ý cấu trúc để minh bạch hóa việc dùng AI
                         trong dự án, đúng tinh thần liêm chính học thuật: AI chỉ
                         hỗ trợ một phần, nội dung cuối cùng do nhóm chịu trách
@@ -693,7 +849,7 @@ function App() {
                       </p>
                     </div>
                   </div>
-                  <div className="pt-1 pb-3 px-4 text-[12px] text-emerald-50/90 space-y-1.5">
+                  <div className="pt-1 pb-3 px-4 text-[12px] text-stone-900 space-y-1.5">
                     <p>
                       • Mục 1: Công cụ đã dùng (ví dụ: ChatGPT, công cụ tìm
                       kiếm, dịch thuật...).
@@ -719,67 +875,14 @@ function App() {
                 </div>
               </div>
             )}
-
-            {activeTab === "tips" && (
-              <div className="mt-4">
-                <div className="rounded-2xl border border-zinc-700/80 bg-zinc-900/80">
-                  <div className="pb-2 pt-3 px-4 flex flex-row items-start gap-3">
-                    <div>
-                      <div className="text-sm flex items-center gap-2 font-semibold">
-                        <ScrollText className="w-4 h-4 text-amber-300" />
-                        Gợi ý sử dụng website trong buổi thuyết trình
-                      </div>
-                      <p className="text-[11px] text-zinc-300 mt-1">
-                        Một số cách để buổi trình bày vừa sinh động vừa bám sát
-                        rubric.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="pt-1 pb-3 px-4 text-[12px] text-zinc-200 space-y-1.5">
-                    <p>
-                      1. <span className="font-semibold">Mở đầu (2–3 phút):</span>{" "}
-                      dùng phần hero giới thiệu nhanh khẩu hiệu “Trường kỳ
-                      kháng chiến nhất định thắng lợi” và ý tưởng website; gắn
-                      với lý thuyết mà môn học yêu cầu.
-                    </p>
-                    <p>
-                      2.{" "}
-                      <span className="font-semibold">
-                        Thân bài (10–15 phút):
-                      </span>{" "}
-                      lần lượt cho khán giả chọn từng tên trong danh sách bên
-                      trái; mỗi thành viên nhóm kể câu chuyện một cận vệ và rút
-                      ra bài học.
-                    </p>
-                    <p>
-                      3. <span className="font-semibold">Tương tác:</span> mời
-                      khán giả đoán xem ai là người Kinh, ai là dân tộc thiểu
-                      số; đặt câu hỏi: “Nếu bạn là cận vệ trong bối cảnh hiện
-                      nay, bạn sẽ cần phẩm chất gì?”.
-                    </p>
-                    <p>
-                      4. <span className="font-semibold">Kết thúc:</span> chuyển
-                      sang phần Rubric & AI Usage, cho giảng viên thấy nhóm đã
-                      chủ động thiết kế sản phẩm bám sát tiêu chí, minh bạch về
-                      phần AI hỗ trợ.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="mt-10 pt-6 border-t border-zinc-800/80 text-[11px] text-zinc-400 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <footer className="mt-16 text-center text-stone-600 text-lg space-y-1 bg-white/60 rounded-2xl px-4 py-10 backdrop-blur-sm">
           <p>
             © {new Date().getFullYear()} – Trình bày dựa trên tư liệu lịch sử về
-            tám cận vệ của Chủ tịch Hồ Chí Minh và rubric đánh giá sản phẩm học
-            phần.
-          </p>
-          <p className="text-zinc-500">
-            Gợi ý: bạn có thể tùy biến thêm màu sắc, font và nội dung để phù
-            hợp với nhóm và môn học cụ thể.
+            tám cận vệ của Chủ tịch Hồ Chí Minh
           </p>
         </footer>
       </div>
