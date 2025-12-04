@@ -750,11 +750,6 @@ function App() {
               <h2 className="text-xl md:text-2xl font-semibold text-stone-900">
                 Rubric chấm điểm sản phẩm & thuyết trình
               </h2>
-              <p className="text-xs md:text-sm text-stone-700 mt-1 max-w-2xl">
-                Phần này tóm tắt 5 tiêu chí chấm điểm (3–2–2–2–1) và gợi ý cách
-                tối ưu website cùng bài trình bày để đạt điểm cao nhất, đồng
-                thời vẫn minh bạch trong việc sử dụng AI.
-              </p>
             </div>
           </motion.div>
 
