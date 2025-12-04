@@ -726,13 +726,6 @@ function App() {
                           </p>
                         </div>
                       ))}
-                      <p className="text-[11px] text-stone-600 pt-1">
-                        Gợi ý trình bày: Khi thuyết trình, mỗi thành viên trong
-                        nhóm có thể đảm nhiệm kể về một nhân vật, kết hợp hiển
-                        thị đoạn tiểu sử và phân tích bài học rút ra (tinh thần
-                        trường kỳ, đoàn kết dân tộc, liêm chính, chí công vô
-                        tư...).
-                      </p>
                     </div>
                   </div>
                 </div>
