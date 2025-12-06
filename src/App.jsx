@@ -767,6 +767,12 @@ function App() {
               >
                 Minh bạch AI Usage
               </PillButton>
+              <PillButton
+                active={activeTab === "job"}
+                onClick={() => setActiveTab("job")}
+              >
+                Phân công công việc nhóm
+              </PillButton>
             </div>
 
             {activeTab === "overview" && (
@@ -858,6 +864,38 @@ function App() {
                       • Mục 5: Cam kết liêm chính học thuật – khẳng định không
                       để AI làm thay toàn bộ sản phẩm, có đối chiếu nguồn chính
                       thống.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "job" && (
+              <div className="mt-4">
+                <div className="rounded-2xl border border-emerald-400 bg-emerald-50/90 backdrop-blur">
+                  <div className="pb-2 pt-3 px-4 flex flex-row items-start justify-between gap-3">
+                    <div>
+                      <div className="text-sm flex items-center gap-2 font-semibold text-stone-900">
+                        <GraduationCap className="w-4 h-4 text-emerald-700" />
+                        Phân công công việc nhóm
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-1 pb-3 px-4 text-[12px] text-stone-900 space-y-1.5">
+                    <p>
+                      <strong>Phạm Đức Nghĩa</strong> - Làm web - AI
+                    </p>
+                    <p>
+                      <strong>Lê Huy Vũ</strong> - Làm web - AI
+                    </p>
+                    <p>
+                      <strong>Nguyễn Sơn Nam</strong> - Soạn nội dung - Bảo tàng
+                    </p>
+                    <p>
+                      <strong>Trần Công Tường</strong> - Soạn nội dung - Bảo tàng
+                    </p>
+                    <p>
+                      <strong>Đỗ Trí Hiếu</strong> - Soạn nội dung - Thuyết trình
                     </p>
                   </div>
                 </div>
